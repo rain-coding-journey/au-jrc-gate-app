@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: au_jrc_db
+    environment:
+      POSTGRES_USER: au_admin
+      POSTGRES_PASSWORD: secure_au_password_2026
+      POSTGRES_DB: au_jrc_gate
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/migrations:/docker-entrypoint-initdb.d
+
+  backend:
+    build: ./server
+    container_name: au_jrc_backend
+    environment:
+      PORT: 5000
+      DATABASE_URL: postgres://au_admin:secure_au_password_2026@postgres:5432/au_jrc_gate
+      JWT_SECRET: au_jrc_super_secret_jwt_key_2026
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./client
+    container_name: au_jrc_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
