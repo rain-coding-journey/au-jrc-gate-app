@@ -61,8 +61,9 @@ Database & Operations
   development, testing, and production environments.
 
 --------------------------------------------------------------------------------
-3. DIRECTORY STRUCTURE
---------------------------------------------------------------------------------
+### 3. DIRECTORY STRUCTURE
+
+```text
 au-jrc-gate-app/
 ├── db/                        # Database scripts & migrations
 │   ├── migrations/            # Version-controlled SQL schema definitions
@@ -98,7 +99,6 @@ au-jrc-gate-app/
 │   └── vite.config.js         # Vite development server & proxy setup
 ├── docker-compose.yml         # Container configuration file
 └── README.md                  # Comprehensive project documentation
-
 --------------------------------------------------------------------------------
 4. SETUP & PREREQUISITES
 --------------------------------------------------------------------------------
