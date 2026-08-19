@@ -1,6 +1,24 @@
 import React from 'react';
 import { QRScanner } from './components/QRScanner';
 
+class ErrorBoundary extends React.Component {
+  state = { hasError: false, error: null };
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ color: 'red', padding: '20px', textAlign: 'center' }}>
+          <h2>Component Crashed</h2>
+          <pre>{this.state.error?.toString()}</pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   return (
     <div style={{ backgroundColor: '#f4f6f8', minHeight: '100vh', padding: '24px 12px' }}>
@@ -10,7 +28,9 @@ export default function App() {
       </header>
 
       <main>
-        <QRScanner officerId="OFFICER-JRC-101" gateLocation="Gov. Pascual Ave Gate 1" />
+        <ErrorBoundary>
+          <QRScanner officerId="OFFICER-JRC-101" gateLocation="Gov. Pascual Ave Gate 1" />
+        </ErrorBoundary>
       </main>
     </div>
   );
