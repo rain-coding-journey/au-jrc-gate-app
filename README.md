@@ -1,3 +1,4 @@
+```text
 ================================================================================
 AU JRC GATE SECURITY & STUDENT VERIFICATION SYSTEM - DOCUMENTATION
 ================================================================================
@@ -63,7 +64,6 @@ Database & Operations
 --------------------------------------------------------------------------------
 ### 3. DIRECTORY STRUCTURE
 
-```text
 au-jrc-gate-app/
 ├── db/                        # Database scripts & migrations
 │   ├── migrations/            # Version-controlled SQL schema definitions
