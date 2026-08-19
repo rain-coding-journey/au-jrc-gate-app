@@ -15,7 +15,8 @@ function MainTabs() {
         display: 'flex',
         gap: '8px',
         borderBottom: '2px solid var(--border)',
-        paddingBottom: '8px'
+        paddingBottom: '8px',
+        flexWrap: 'wrap'
       }}>
         <button
           onClick={() => setActiveTab('scanner')}
@@ -83,5 +84,69 @@ function MainTabs() {
         )}
       </div>
     </div>
+  );
+}
+
+function PortalContent() {
+  const { user, logout } = useAuth();
+  const [showLogin, setShowLogin] = useState(false);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      {/* Header Bar */}
+      <header style={{
+        backgroundColor: 'var(--primary)',
+        color: '#fff',
+        padding: '16px 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        boxShadow: 'var(--shadow-md)'
+      }}>
+        <div>
+          <h1 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 600 }}>Arellano University — Jose Rizal Campus</h1>
+          <p style={{ fontSize: '0.8rem', opacity: 0.8, margin: 0 }}>Gate Security & Entry Portal</p>
+        </div>
+
+        {user ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 500 }}>{user.name} ({user.role.toUpperCase()})</span>
+            <button
+              onClick={logout}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #fff', background: 'transparent', color: '#fff', cursor: 'pointer' }}
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowLogin(true)}
+            style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', backgroundColor: '#fff', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer' }}
+          >
+            Sign In
+          </button>
+        )}
+      </header>
+
+      {/* Main Body */}
+      <main style={{ flex: 1, maxWidth: '800px', width: '100%', margin: '0 auto', padding: '24px 16px' }}>
+        <MainTabs />
+      </main>
+
+      {/* Footer */}
+      <footer style={{ textAlign: 'center', padding: '16px', fontSize: '0.8rem', color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
+        Arellano University Gate Security &copy; {new Date().getFullYear()} — All Rights Reserved
+      </footer>
+
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <PortalContent />
+    </AuthProvider>
   );
 }
