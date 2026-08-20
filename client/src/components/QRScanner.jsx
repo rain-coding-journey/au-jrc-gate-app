@@ -57,9 +57,27 @@ export const QRScanner = ({ officerId, gateLocation }) => {
   };
 
   const handleScanSuccess = async (decodedText) => {
+    let studentId = decodedText;
+    let studentName = null;
+    let strand = null;
+
+    // 1. Parse JSON payload safely
+    try {
+      const parsedData = JSON.parse(decodedText);
+      studentId = parsedData.studentId || parsedData.student_id || decodedText;
+      studentName = parsedData.name || parsedData.full_name || null;
+      strand = parsedData.strand || parsedData.program || null;
+    } catch (e) {
+      // Scanned QR code is plain text (fallback)
+      console.log('Scanned plain text QR:', decodedText);
+    }
+
     const payload = {
-      student_id: decodedText,
+      student_id: studentId,
+      full_name: studentName,
+      strand: strand,
       gate_location: gateLocation,
+      officer_id: officerId,
       scanned_at: new Date().toISOString(),
     };
 
@@ -77,11 +95,19 @@ export const QRScanner = ({ officerId, gateLocation }) => {
         setScanResult(data);
       } catch (err) {
         await saveScanOffline(payload);
-        setScanResult({ status: 'OFFLINE_RECORDED', student_id: payload.student_id });
+        setScanResult({
+          status: 'OFFLINE_RECORDED',
+          student_id: studentId,
+          student: { full_name: studentName, program: strand },
+        });
       }
     } else {
       await saveScanOffline(payload);
-      setScanResult({ status: 'OFFLINE_RECORDED', student_id: payload.student_id });
+      setScanResult({
+        status: 'OFFLINE_RECORDED',
+        student_id: studentId,
+        student: { full_name: studentName, program: strand },
+      });
     }
   };
 
@@ -105,11 +131,13 @@ export const QRScanner = ({ officerId, gateLocation }) => {
         }}>
           <h3>{scanResult.access === 'ALLOWED' ? '✅ ENTRY ALLOWED' : scanResult.status === 'OFFLINE_RECORDED' ? '⚠️ OFFLINE LOGGED' : '🚫 ACCESS DENIED'}</h3>
           <p><strong>Student ID:</strong> {scanResult.student?.student_id || scanResult.student_id}</p>
-          {scanResult.student && (
-            <>
-              <p><strong>Name:</strong> {scanResult.student.full_name}</p>
-              <p><strong>Program:</strong> {scanResult.student.program}</p>
-            </>
+          
+          {(scanResult.student?.full_name || scanResult.student?.name) && (
+            <p><strong>Name:</strong> {scanResult.student.full_name || scanResult.student.name}</p>
+          )}
+
+          {(scanResult.student?.program || scanResult.student?.strand) && (
+            <p><strong>Strand/Program:</strong> {scanResult.student.program || scanResult.student.strand}</p>
           )}
         </div>
       )}
